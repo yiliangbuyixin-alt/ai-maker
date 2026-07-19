@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import UpgradeModal from "@/components/UpgradeModal";
 import { CATEGORY_SETS, type ChatMessage, type InterviewMode } from "@/lib/types";
@@ -9,7 +9,18 @@ function displayText(content: string): string {
   return content.replace(/\n?\[PROGRESS completed=\d+\]\s*$/, "").trim();
 }
 
+// useSearchParams() opts this subtree out of the static prerender shell,
+// so Next.js requires it to sit behind a Suspense boundary (build fails
+// otherwise: "useSearchParams() should be wrapped in a suspense boundary").
 export default function InterviewPage() {
+  return (
+    <Suspense>
+      <InterviewPageInner />
+    </Suspense>
+  );
+}
+
+function InterviewPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const upgradedPlan = searchParams.get("upgraded");
