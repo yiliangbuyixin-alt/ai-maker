@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Claude Code local settings — these accumulate command history (including
+# full command strings) as permissions are granted, which can end up
+# containing secrets pasted or generated during a session.
+/.claude/settings.json
+/.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
