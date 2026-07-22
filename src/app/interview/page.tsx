@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import UpgradeModal from "@/components/UpgradeModal";
 import { CATEGORY_SETS, type ChatMessage, type InterviewMode } from "@/lib/types";
 
@@ -9,21 +9,8 @@ function displayText(content: string): string {
   return content.replace(/\n?\[PROGRESS completed=\d+\]\s*$/, "").trim();
 }
 
-// useSearchParams() opts this subtree out of the static prerender shell,
-// so Next.js requires it to sit behind a Suspense boundary (build fails
-// otherwise: "useSearchParams() should be wrapped in a suspense boundary").
 export default function InterviewPage() {
-  return (
-    <Suspense>
-      <InterviewPageInner />
-    </Suspense>
-  );
-}
-
-function InterviewPageInner() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const upgradedPlan = searchParams.get("upgraded");
   const [mode, setMode] = useState<InterviewMode | null>(null);
   const [specialty, setSpecialty] = useState("");
   const [started, setStarted] = useState(false);
@@ -41,10 +28,6 @@ function InterviewPageInner() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages, loading]);
-
-  useEffect(() => {
-    if (upgradedPlan) router.replace("/interview");
-  }, [upgradedPlan, router]);
 
   async function sendMessages(nextMessages: ChatMessage[], activeMode: InterviewMode) {
     setLoading(true);
@@ -124,12 +107,7 @@ function InterviewPageInner() {
 
   if (!mode) {
     return (
-      <main className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
-        {upgradedPlan && (
-          <p className="w-full max-w-md rounded-lg border border-green-600/30 bg-green-600/10 px-4 py-2 text-sm text-green-700 dark:text-green-400">
-            {upgradedPlan === "business" ? "Business" : "Pro"}プランへのアップグレードが完了しました。
-          </p>
-        )}
+      <main className="flex flex-1 items-center justify-center p-6">
         <div className="w-full max-w-md flex flex-col gap-4 rounded-xl border border-black/10 dark:border-white/15 p-6">
           <div>
             <h1 className="text-lg font-semibold">ヒアリングの深さを選んでください</h1>

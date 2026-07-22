@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     // which user_usage row to update.
     metadata: { user_id: user.id, plan },
     subscription_data: { metadata: { user_id: user.id, plan } },
-    success_url: `${origin}/interview?upgraded=${plan}`,
+    success_url: `${origin}/agents?upgraded=${plan}`,
     cancel_url: `${origin}/interview`,
   });
 
